@@ -11,7 +11,16 @@
     <body>
         <h1>Orders</h1>
         <div>
-
+            {% if orders %}
+                {% for order in orders %}
+                    {{order.id}}
+                    {{order.customerid}}
+                    {{order.products}}
+                    {{order.orderstatus}}
+                {% endfor %}
+            {% else %}
+                <p>We couldn't find any orders :(</p>
+            {% endif %}
         </div>
     </body>
 </html>
