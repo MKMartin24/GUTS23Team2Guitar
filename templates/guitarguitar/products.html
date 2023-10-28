@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+{% extends templates/base.html %}
 {% load static %}
-<html lang = 'en'>
+
+{% block new%}
+
     <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="{% static 'css/stylesheet.css' %}">
         <title>
             GuitarGuitar - product page
         </title>
@@ -30,4 +30,4 @@
 
         </div>
     </body>
-</html>
+{% endblock %}
