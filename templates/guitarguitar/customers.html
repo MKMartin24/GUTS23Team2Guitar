@@ -2,9 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Customer List</title>
 </head>
 <body>
+<h1>Customer List</h1>
+<ul>
+    {% for customer in customers %}
+        <li>
+            <strong>ID:</strong> {{ customer.id }}<br>
+            <strong>UID:</strong> {{ customer.uid }}<br>
+            <strong>Name:</strong> {{ customer.first_name }} {{ customer.last_name }}<br>
+            <strong>Username:</strong> {{ customer.username }}<br>
+            <strong>Email:</strong> {{ customer.email }}<br>
+            <!-- Add more fields as needed -->
+        </li>
+        <br>
+    {% endfor %}
+</ul>
 
 </body>
 </html>
