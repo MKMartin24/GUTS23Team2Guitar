@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang = 'en'>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="{% static 'css/stylesheet.css' %}">
+        <title>
+            GuitarGuitar - product page
+        </title>
+    </head>
+
+    <body>
+        <h1>Products</h1>
+        <div>
+            {% for product in products %}
+            <li>
+                <strong>Product Name:</strong> {{ product.ItemName }}<br>
+                <strong>ASN:</strong> {{ product.ASN }}<br>
+                <strong>SKU_ID:</strong> {{ product.SKU_ID }}<br>
+                <strong>Price:</strong> {{ product.SalesPrice }}<br>
+                <strong>Quantity in stock</strong> {{ product.QtyInStock }}<br>
+                <strong>Quantity on order</strong>  {{ product.QtyOnOrder}} <br>
+                <strong>Description</strong> {{ product.ProductDetail }} <br>
+                <br>
+            </li>
+
+                {% endfor %}
+            
+            
+
+        </div>
+    </body>
+</html>
