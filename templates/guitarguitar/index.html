@@ -4,23 +4,16 @@
     <head>
         <link rel="stylesheet" href="{% static 'css/stylesheet.css' %}">
         <title>
-            GuitarGuitar - view order page
+            GuitarGuitar - home page
         </title>
     </head>
 
     <body>
         <h1>Orders</h1>
         <div>
-            {% if orders %}
-                {% for order in orders %}
-                    <p>{{order.Id}}<p>
-                    {{order.CustomerId}}
-                    {% comment %} {{order.Products[0]}} {% endcomment %}
-                    {{order.OrderStatus}}
-                {% endfor %}
-            {% else %}
-                <p>We couldn't find any orders :(</p>
-            {% endif %}
+            <a href="{% url 'guitarguitar:view_orders' %}">View Orders</a>
+            <a href="{% url 'guitarguitar:view_customers' %}">View Customers</a>
+            <a href="{% url 'guitarguitar:view_products' %}">View Products</a>
         </div>
     </body>
 </html>
