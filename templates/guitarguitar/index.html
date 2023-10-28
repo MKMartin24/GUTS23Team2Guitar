@@ -2,6 +2,7 @@
 {% load static %}
 <html lang = 'en'>
     <head>
+        <meta charset="UTF-8" />
         <link rel="stylesheet" href="{% static 'css/stylesheet.css' %}">
         <title>
             GuitarGuitar - home page
@@ -9,7 +10,7 @@
     </head>
 
     <body>
-        <h1>Orders</h1>
+        <h1>Welcome!</h1>
         <div>
             <a href="{% url 'guitarguitar:view_orders' %}">View Orders</a>
             <a href="{% url 'guitarguitar:view_customers' %}">View Customers</a>
