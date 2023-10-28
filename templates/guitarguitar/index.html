@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+
 <html lang = 'en'>
     <head>
         <meta charset="UTF-8" />
@@ -10,6 +11,16 @@
     </head>
 
     <body>
+        <!-- TODO: move to base template -->
+        {% if login %}
+        <p> Logged in as {{ login }} </p>
+        <a href="{% url 'guitarguitar:logout' %}">Logout</a>
+        {% else %}
+        <a href="{% url 'guitarguitar:login' %}">Login</a>
+        {% endif %}
+
+        <h1>Orders</h1>
+
         <h1>Welcome!</h1>
         <div>
             <a href="{% url 'guitarguitar:view_orders' %}">View Orders</a>
