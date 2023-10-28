@@ -10,6 +10,7 @@ def index(request):
     #print(context_dict)
     return render(request, 'guitarguitar/index.html', context=context_dict)
 
+
 def view_orders(request):
     context_dict = {"orders":Order.load_api()}
     print(context_dict)
