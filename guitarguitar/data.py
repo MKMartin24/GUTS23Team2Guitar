@@ -1,3 +1,10 @@
+"""
+Data loading and deserialisation
+
+Main entrypoints are the .load_api() methods of Customer, Product and Order
+"""
+
+
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional, Type, TypeVar
@@ -6,13 +13,16 @@ import requests
 
 class ApiError(Exception):
     """An error when trying to read from the API"""
+
     pass
 
 
 ExpT = TypeVar("ExpT")
 
 
-def get_typed(obj: Dict, key: str, exp_type: Type[ExpT], context: str) -> Optional[ExpT]:
+def get_typed(
+    obj: Dict, key: str, exp_type: Type[ExpT], context: str
+) -> Optional[ExpT]:
     """Try read a field from a dict, and check its type if successful"""
 
     # Attempt to get field
@@ -42,6 +52,8 @@ def try_get(obj: Dict, key: str, exp_type: Type[ExpT], context: str) -> ExpT:
 
 
 class Colour(Enum):
+    """Enum for API Product colours"""
+
     Red = 1
     Orange = 2
     Yellow = 3
@@ -62,6 +74,8 @@ class Colour(Enum):
 
     @staticmethod
     def from_json(val: int) -> "Colour":
+        """Deserialise the json representation of the object"""
+
         if 1 <= val <= 15:
             return Colour(val)
         else:
@@ -69,6 +83,8 @@ class Colour(Enum):
 
 
 class Pickup(Enum):
+    """Enum for API Product pickup types"""
+
     ElectroAcoustic = 1
     SS = 2
     SSS = 3
@@ -85,6 +101,8 @@ class Pickup(Enum):
 
     @staticmethod
     def from_json(val: int) -> "Pickup":
+        """Deserialise the json representation of the object"""
+
         if 1 <= val <= 11:
             return Pickup(val)
         else:
@@ -92,6 +110,8 @@ class Pickup(Enum):
 
 
 class BodyShape(Enum):
+    """Enum for API Product shapes"""
+
     SStyle = 1
     TStyle = 2
     DoubleCut = 3
@@ -113,6 +133,8 @@ class BodyShape(Enum):
 
     @staticmethod
     def from_json(val: int) -> "BodyShape":
+        """Deserialise the json representation of the object"""
+
         if 1 <= val <= 16:
             return BodyShape(val)
         else:
@@ -120,6 +142,8 @@ class BodyShape(Enum):
 
 
 class OrderStatus(Enum):
+    """Enum for API Order statuses"""
+
     Placed = 1
     Dispatched = 2
     Delivering = 3
@@ -131,6 +155,8 @@ class OrderStatus(Enum):
 
     @staticmethod
     def from_json(val: int) -> "OrderStatus":
+        """Deserialise the json representation of the object"""
+
         if 1 <= val <= 6:
             return OrderStatus(val)
         else:
@@ -149,6 +175,8 @@ class Address:
 
     @staticmethod
     def from_json(data: Dict, context: str) -> "Address":
+        """Deserialise the json representation of the object"""
+
         data = data.copy()
         ctx = f"{context}:Address"
         ret = Address(
@@ -159,6 +187,7 @@ class Address:
             try_get(data, "country", str, ctx),
         )
         assert len(data) == 0, f"Leftover data {data}"
+
         return ret
 
 
@@ -178,6 +207,8 @@ class Customer:
 
     @staticmethod
     def from_json(data: Dict) -> "Customer":
+        """Deserialise the json representation of the object"""
+
         data = data.copy()
         ctx = "Customer"
         ret = Customer(
@@ -188,25 +219,29 @@ class Customer:
             try_get(data, "phone_number", str, ctx),
             try_get(data, "avatar", str, ctx),
             Address.from_json(try_get(data, "address", dict, ctx), ctx),
-            get_typed(data, "LoyaltyLevel", int, ctx) or 0, # Not always present
-            get_typed(data, "Orders", object, ctx), # Not always present
+            get_typed(data, "LoyaltyLevel", int, ctx) or 0,  # Not always present
+            get_typed(data, "Orders", object, ctx),  # Not always present
         )
         assert len(data) == 0, f"Leftover data {data}"
+
         return ret
 
-    
     @staticmethod
     def load_api() -> List["Customer"]:
+        """Load the customer list from the server"""
+
         response = requests.get("https://www.guitarguitar.co.uk/hackathon/customers/")
 
         if response.status_code != 200:
-            raise ApiError(f"Couldn't contact server for customers: {response.status_code} {response.content}")
-        
+            raise ApiError(
+                f"Couldn't contact server for customers: {response.status_code} {response.content}"
+            )
+
         data = response.json()
 
         if not type(data) == list:
             raise ApiError("Customers response was not json list")
-        
+
         return [Customer.from_json(entry) for entry in data]
 
 
@@ -231,10 +266,12 @@ class Product:
     Pickup: Pickup
     BodyShape: BodyShape
     CreatedOn: str
-    ImageUrls: Any # Not sure what this is?
+    ImageUrls: Any  # Not sure what this is?
 
     @staticmethod
     def from_json(data: Dict, context=None) -> "Product":
+        """Deserialise the json representation of the object"""
+
         data = data.copy()
         if context is None:
             ctx = f"{context}:Product"
@@ -263,24 +300,29 @@ class Product:
         assert len(data) == 0, f"Leftover data {data}"
         return ret
 
-    
     @staticmethod
     def load_api() -> List["Product"]:
+        """Load the product list from the server"""
+
         response = requests.get("https://www.guitarguitar.co.uk/hackathon/products/")
 
         if response.status_code != 200:
-            raise ApiError(f"Couldn't contact server for products: {response.status_code} {response.content}")
-        
+            raise ApiError(
+                f"Couldn't contact server for products: {response.status_code} {response.content}"
+            )
+
         data = response.json()
 
         if not type(data) == list:
             raise ApiError("Products response was not json list")
-        
+
         return [Product.from_json(entry) for entry in data]
 
 
 @dataclass(frozen=True)
 class Order:
+    """Accessor for the API Order object"""
+
     Id: int
     CustomerId: int
     ShippingAddress: Address
@@ -291,13 +333,18 @@ class Order:
 
     @staticmethod
     def from_json(data: Dict) -> "Order":
+        """Deserialise the json representation of the object"""
+
         data = data.copy()
         ctx = "Order"
         ret = Order(
             try_get(data, "Id", int, ctx),
             try_get(data, "CustomerId", int, ctx),
             Address.from_json(try_get(data, "ShippingAddress", dict, ctx), "Order"),
-            [Product.from_json(entry, "Order") for entry in try_get(data, "Products", list, ctx)],
+            [
+                Product.from_json(entry, "Order")
+                for entry in try_get(data, "Products", list, ctx)
+            ],
             try_get(data, "DateCreated", str, ctx),
             try_get(data, "OrderTotal", float, ctx),
             OrderStatus(try_get(data, "OrderStatus", int, ctx)),
@@ -307,14 +354,18 @@ class Order:
 
     @staticmethod
     def load_api() -> List["Order"]:
+        """Load the order lsit from the server"""
+
         response = requests.get("https://www.guitarguitar.co.uk/hackathon/orders/")
 
         if response.status_code != 200:
-            raise ApiError(f"Couldn't contact server for orders: {response.status_code} {response.content}")
-        
+            raise ApiError(
+                f"Couldn't contact server for orders: {response.status_code} {response.content}"
+            )
+
         data = response.json()
 
         if not type(data) == list:
             raise ApiError("Orders response was not json list")
-        
+
         return [Order.from_json(entry) for entry in data]
